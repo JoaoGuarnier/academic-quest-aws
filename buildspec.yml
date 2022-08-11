@@ -1,0 +1,18 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      docker: 18
+  build:
+    commands:
+      - apt-get install jq -y
+      - ContainerName="academicquest"
+      - ImageURI=$(cat imageDetail.json | jq -r '.ImageURI')
+      - printf '[{"name":"academicquest","imageUri":"991420018350.dkr.ecr.us-east-1.amazonaws.com/academicquest:latest"}]' > imagedefinitions.json
+#      - sed -i -e "s|CONTAINER_NAME|$ContainerName|g" imagedefinitions.json
+#      - sed -i -e "s|IMAGE_URI|$ImageURI|g" imagedefinitions.json
+      - cat imagedefinitions.json
+
+artifacts:
+  files:
+    - imagedefinitions.json
