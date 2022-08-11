@@ -1,0 +1,26 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      java: corretto11
+  pre_build:
+    commands:
+      - echo In the pre_build phase...
+  build:
+    commands:
+      - echo Build started on `date`
+      - mvn package
+      - echo Building Docker image
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 991420018350.dkr.ecr.us-east-1.amazonaws.com
+      - docker build -t academicquest .
+      - docker tag academicquest:latest 991420018350.dkr.ecr.us-east-1.amazonaws.com/academicquest:latest
+
+  post_build:
+    commands:
+      - echo Pushing to ECR
+      - docker push 991420018350.dkr.ecr.us-east-1.amazonaws.com/academicquest:latest
+      - printf '[{"name":"academic-quest","imageUri":"991420018350.dkr.ecr.us-east-1.amazonaws.com/academicquest:latest"}]' > imagedefinitions.json
+
+artifacts:
+  files:
+    - imagedefinitions.json
