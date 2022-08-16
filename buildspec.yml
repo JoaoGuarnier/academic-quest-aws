@@ -2,16 +2,24 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      docker: 18
+      java: corretto11
+  pre_build:
+    commands:
+      - echo In the pre_build phase...
   build:
     commands:
-      - apt-get install jq -y
-      - ContainerName="academicquest"
-      - ImageURI=$(cat imageDetail.json | jq -r '.ImageURI')
+      - echo Build started on `date`
+      - mvn package
+      - echo Building Docker image
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 991420018350.dkr.ecr.us-east-1.amazonaws.com
+      - docker build -t academicquest .
+      - docker tag academicquest:latest 991420018350.dkr.ecr.us-east-1.amazonaws.com/academicquest:latest
+
+  post_build:
+    commands:
+      - echo Pushing to ECR
+      - docker push 991420018350.dkr.ecr.us-east-1.amazonaws.com/academicquest:latest
       - printf '[{"name":"academicquest","imageUri":"991420018350.dkr.ecr.us-east-1.amazonaws.com/academicquest:latest"}]' > imagedefinitions.json
-#      - sed -i -e "s|CONTAINER_NAME|$ContainerName|g" imagedefinitions.json
-#      - sed -i -e "s|IMAGE_URI|$ImageURI|g" imagedefinitions.json
-      - cat imagedefinitions.json
 
 artifacts:
   files:
