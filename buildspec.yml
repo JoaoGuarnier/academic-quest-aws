@@ -19,7 +19,7 @@ phases:
     commands:
       - echo Pushing to ECR
       - docker push 991420018350.dkr.ecr.us-east-1.amazonaws.com/academicquest:latest
-      - printf '[{"name":"academicquest","imageUri":"991420018350.dkr.ecr.us-east-1.amazonaws.com/academicquest:latest"}]' > imagedefinitions.json
+      - printf '[{"name":"academic-quest","imageUri":"991420018350.dkr.ecr.us-east-1.amazonaws.com/academicquest:latest"}]' > imagedefinitions.json
 
 artifacts:
   files:
